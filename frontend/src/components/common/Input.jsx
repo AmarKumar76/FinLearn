@@ -21,20 +21,31 @@ export function Input({
           {required && <span className="text-terracotta ml-1">*</span>}
         </label>
       )}
-      <input
-        id={inputId}
-        type={type}
-        required={required}
-        className={cn(
-          'w-full px-3.5 py-2.5 rounded-lg border bg-ivory-surface text-aubergine placeholder:text-aubergine/40 text-sm transition-colors',
-          'focus:outline-none focus:ring-2 focus:ring-terracotta focus:border-transparent',
-          error
-            ? 'border-red-500 focus:ring-red-500'
-            : 'border-brass/30 hover:border-brass/60',
-          className
+      <div className="relative">
+        <input
+          id={inputId}
+          type={type}
+          required={required}
+          className={cn(
+            'w-full px-3.5 py-2.5 rounded-lg border bg-ivory-surface text-aubergine placeholder:text-aubergine/40 text-sm transition-colors',
+            'focus:outline-none focus:ring-2 focus:ring-terracotta focus:border-transparent',
+            error
+              ? 'border-red-500 focus:ring-red-500'
+              : 'border-brass/30 hover:border-brass/60',
+            props.endAdornment ? 'pr-10' : '',
+            className
+          )}
+          {...(() => {
+            const { endAdornment, ...rest } = props;
+            return rest;
+          })()}
+        />
+        {props.endAdornment && (
+          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-auto">
+            {props.endAdornment}
+          </div>
         )}
-        {...props}
-      />
+      </div>
       {error && (
         <p className="text-xs text-red-600 font-medium">{error}</p>
       )}
