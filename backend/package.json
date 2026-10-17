@@ -1,0 +1,35 @@
+{
+  "name": "finlearn-backend",
+  "version": "1.0.0",
+  "description": "FinLearn Financial Literacy & Money Management Platform - Backend API",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node --test --test-concurrency=1 tests/**/*.test.js",
+    "create-admin": "node scripts/createAdmin.js",
+    "seed-curriculum": "node scripts/seedCurriculum.js"
+  },
+  "keywords": [
+    "fintech",
+    "financial-literacy",
+    "inr-money-management",
+    "express",
+    "mongodb"
+  ],
+  "author": "FinLearn Team",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.7",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.1",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.11.2",
+    "multer": "^2.4.0"
+  }
+}
