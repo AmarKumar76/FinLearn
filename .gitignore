@@ -36,4 +36,6 @@ scratch/
 .mongodb_data/
 
 #implementation plan
-docs/
+docs/*
+!docs/interview-preparation/
+
