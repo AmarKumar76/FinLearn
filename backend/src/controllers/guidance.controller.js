@@ -132,18 +132,34 @@ export async function calculateInvestment(req, res, next) {
     const {
       monthlyInvestment,
       expectedAnnualReturnPct,
+      expectedAnnualReturnPercent,
       timeHorizonYears,
+      horizonYears,
       inflationRatePct,
+      annualInflationPercent,
     } = req.body;
+
+    const rate = expectedAnnualReturnPct !== undefined ? expectedAnnualReturnPct : expectedAnnualReturnPercent;
+    const years = timeHorizonYears !== undefined ? timeHorizonYears : horizonYears;
+    const inflation = inflationRatePct !== undefined ? inflationRatePct : (annualInflationPercent !== undefined ? annualInflationPercent : 6);
 
     const result = calculateInvestmentProjection({
       monthlyInvestment,
-      expectedAnnualReturnPct,
-      timeHorizonYears,
-      inflationRatePct,
+      expectedAnnualReturnPct: rate,
+      timeHorizonYears: years,
+      inflationRatePct: inflation,
     });
 
-    return successResponse(res, result, 'Investment growth projection evaluated');
+    // Provide both Rupee values and Paise values for seamless frontend compatibility
+    const enrichedResult = {
+      ...result,
+      totalInvestedPaise: Math.round(result.totalInvested * 100),
+      nominalFutureValuePaise: Math.round(result.futureValueNominal * 100),
+      nominalWealthGainPaise: Math.round(result.estimatedWealthGain * 100),
+      inflationAdjustedValuePaise: Math.round(result.futureValueReal * 100),
+    };
+
+    return successResponse(res, enrichedResult, 'Investment growth projection evaluated');
   } catch (err) {
     return errorResponse(res, err.message, 'VALIDATION_ERROR', 400);
   }

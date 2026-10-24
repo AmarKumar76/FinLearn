@@ -149,11 +149,23 @@ export function calculateInvestmentProjection({
   if (isNaN(p) || p <= 0) {
     throw new Error('Monthly investment must be greater than zero');
   }
+  if (p > 10000000) {
+    throw new Error('Monthly investment cannot exceed ₹1 Crore (₹10,000,000)');
+  }
   if (isNaN(rAnnual) || rAnnual < 0) {
     throw new Error('Expected annual return cannot be negative');
   }
+  if (rAnnual > 100) {
+    throw new Error('Expected annual return cannot exceed 100% per annum');
+  }
   if (isNaN(years) || years <= 0 || !Number.isInteger(years)) {
-    throw new Error('Time horizon in years must be a positive integer');
+    throw new Error('Time horizon in years must be a positive whole number');
+  }
+  if (years > 60) {
+    throw new Error('Time horizon cannot exceed 60 years');
+  }
+  if (isNaN(infAnnual) || infAnnual < 0 || infAnnual > 100) {
+    throw new Error('Annual inflation must be between 0% and 100%');
   }
 
   const totalMonths = years * 12;

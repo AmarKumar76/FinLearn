@@ -92,20 +92,65 @@ export function InvestmentGuidePage() {
   }, []);
 
   const runInvestmentCalculation = async () => {
+    const monthly = parseFloat(monthlyAmount);
+    const ret = parseFloat(expectedReturn);
+    const years = parseInt(horizonYears, 10);
+    const infl = inflationRate === '' ? 0 : parseFloat(inflationRate);
+
+    // Precise client-side validation
+    if (isNaN(monthly) || monthly <= 0) {
+      setCalcError('Monthly investment must be greater than zero.');
+      setProjection(null);
+      return;
+    }
+    if (monthly > 10000000) {
+      setCalcError('Monthly investment cannot exceed ₹1 Crore (₹10,000,000).');
+      setProjection(null);
+      return;
+    }
+    if (isNaN(ret) || ret < 0) {
+      setCalcError('Expected annual return cannot be negative.');
+      setProjection(null);
+      return;
+    }
+    if (ret > 100) {
+      setCalcError('Expected annual return cannot exceed 100% per annum.');
+      setProjection(null);
+      return;
+    }
+    if (isNaN(years) || years <= 0 || !Number.isInteger(years)) {
+      setCalcError('Investment horizon must be a positive whole number of years.');
+      setProjection(null);
+      return;
+    }
+    if (years > 60) {
+      setCalcError('Investment horizon cannot exceed 60 years.');
+      setProjection(null);
+      return;
+    }
+    if (isNaN(infl) || infl < 0 || infl > 100) {
+      setCalcError('Annual inflation rate must be between 0% and 100%.');
+      setProjection(null);
+      return;
+    }
+
     try {
       setCalcLoading(true);
       setCalcError(null);
       const res = await api.post('/guidance/calculate-investment', {
-        monthlyInvestment: parseFloat(monthlyAmount),
-        expectedAnnualReturnPercent: parseFloat(expectedReturn),
-        horizonYears: parseInt(horizonYears, 10),
-        annualInflationPercent: parseFloat(inflationRate)
+        monthlyInvestment: monthly,
+        expectedAnnualReturnPct: ret,
+        expectedAnnualReturnPercent: ret,
+        timeHorizonYears: years,
+        horizonYears: years,
+        inflationRatePct: infl,
+        annualInflationPercent: infl,
       });
       if (res.data?.data) {
         setProjection(res.data.data);
       }
     } catch (err) {
-      setCalcError(err.response?.data?.message || 'Error running projection');
+      setCalcError(err.response?.data?.message || 'Unable to evaluate projection with given parameters.');
     } finally {
       setCalcLoading(false);
     }
@@ -113,7 +158,7 @@ export function InvestmentGuidePage() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (monthlyAmount && expectedReturn !== '' && horizonYears) {
+      if (monthlyAmount !== '' && expectedReturn !== '' && horizonYears !== '') {
         runInvestmentCalculation();
       }
     }, 250);
@@ -125,19 +170,19 @@ export function InvestmentGuidePage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-black text-aubergine">
+            <h1 className="text-2xl font-black text-theme-primary">
               Investment Learning & Risk Guide
             </h1>
             <Badge variant="terracotta" size="sm">SEBI Compliant Education</Badge>
           </div>
-          <p className="text-xs text-aubergine/70">
+          <p className="text-xs text-theme-muted mt-1">
             Compounding projections • Inflation discounting • Asset classes • Zero stock tips
           </p>
         </div>
       </div>
 
-      {/* Mandatory SEBI Disclaimer Banner */}
-      <div className="p-4 rounded-xl bg-amber-50/80 border border-amber-300 text-xs text-amber-950 flex items-start gap-3 shadow-xs">
+      {/* Mandatory SEBI Disclaimer Banner - preserve light amber background and dark text */}
+      <div className="p-4 rounded-xl bg-amber-50/90 border border-amber-300 text-xs text-amber-950 flex items-start gap-3 shadow-xs">
         <Info className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
         <div className="space-y-1">
           <span className="font-bold text-amber-900 block uppercase tracking-wider text-[11px]">
@@ -200,53 +245,63 @@ export function InvestmentGuidePage() {
           {/* Results Visuals */}
           <div className="lg:col-span-7 space-y-4">
             {calcError && (
-              <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-xs text-rose-800">
+              <div className="p-3 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 text-xs text-rose-800 dark:text-rose-300">
                 {calcError}
               </div>
             )}
 
-            <div className="p-5 rounded-2xl bg-aubergine text-ivory space-y-2">
+            <div className="p-5 rounded-2xl bg-aubergine text-ivory space-y-2 border border-aubergine-light shadow-sm">
               <span className="text-xs font-bold text-brass-light uppercase tracking-wider block">
                 Projected Nominal Future Value
               </span>
               <div className="text-3xl sm:text-4xl font-black text-ivory font-mono">
                 {projection
-                  ? formatPaiseToINR(projection.nominalFutureValuePaise)
+                  ? (projection.nominalFutureValuePaise !== undefined
+                      ? formatPaiseToINR(projection.nominalFutureValuePaise)
+                      : formatRupeesToINR(projection.futureValueNominal))
                   : '₹0.00'}
               </div>
               <p className="text-[11px] text-lilac-light">
-                Total invested principal: {projection ? formatPaiseToINR(projection.totalInvestedPaise) : '₹0'}
+                Total invested principal: {projection
+                  ? (projection.totalInvestedPaise !== undefined
+                      ? formatPaiseToINR(projection.totalInvestedPaise)
+                      : formatRupeesToINR(projection.totalInvested))
+                  : '₹0'}
               </p>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <div className="p-3.5 rounded-xl bg-ivory-dark border border-brass/20 space-y-1">
-                <span className="text-[10px] font-bold text-aubergine/60 uppercase tracking-wider block">
+              <div className="p-3.5 rounded-xl bg-theme-subtle border border-theme-border space-y-1">
+                <span className="text-[10px] font-bold text-theme-muted uppercase tracking-wider block">
                   Wealth Gain (Gain from Compounding)
                 </span>
-                <span className="text-sm font-black text-emerald-800 font-mono block">
+                <span className="text-sm font-black text-emerald-600 dark:text-emerald-400 font-mono block">
                   {projection
-                    ? formatPaiseToINR(projection.nominalWealthGainPaise)
+                    ? (projection.nominalWealthGainPaise !== undefined
+                        ? formatPaiseToINR(projection.nominalWealthGainPaise)
+                        : formatRupeesToINR(projection.estimatedWealthGain))
                     : '₹0.00'}
                 </span>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-ivory-dark border border-brass/20 space-y-1">
-                <span className="text-[10px] font-bold text-aubergine/60 uppercase tracking-wider block">
+              <div className="p-3.5 rounded-xl bg-theme-subtle border border-theme-border space-y-1">
+                <span className="text-[10px] font-bold text-theme-muted uppercase tracking-wider block">
                   Inflation-Adjusted Purchasing Power
                 </span>
-                <span className="text-sm font-black text-aubergine font-mono block">
+                <span className="text-sm font-black text-theme-primary font-mono block">
                   {projection
-                    ? formatPaiseToINR(projection.inflationAdjustedValuePaise)
+                    ? (projection.inflationAdjustedValuePaise !== undefined
+                        ? formatPaiseToINR(projection.inflationAdjustedValuePaise)
+                        : formatRupeesToINR(projection.futureValueReal))
                     : '₹0.00'}
                 </span>
               </div>
             </div>
 
-            <div className="p-3 rounded-lg bg-ivory-surface border border-brass/15 text-[11px] text-aubergine/80 space-y-1">
-              <span className="font-bold text-aubergine">Real World Takeaway:</span>
+            <div className="p-3 rounded-lg bg-theme-subtle border border-theme-border text-[11px] text-theme-muted space-y-1">
+              <span className="font-bold text-theme-primary">Real World Takeaway:</span>
               <p>
-                At a {inflationRate}% annual inflation rate over {horizonYears} years, the purchasing power of your ₹{projection ? Math.round(projection.nominalFutureValuePaise / 100).toLocaleString('en-IN') : 0} corpus is equivalent to ₹{projection ? Math.round(projection.inflationAdjustedValuePaise / 100).toLocaleString('en-IN') : 0} in today's money.
+                At a {inflationRate || 0}% annual inflation rate over {horizonYears || 0} years, the purchasing power of your ₹{projection ? Math.round((projection.nominalFutureValuePaise !== undefined ? projection.nominalFutureValuePaise / 100 : projection.futureValueNominal) || 0).toLocaleString('en-IN') : 0} corpus is equivalent to ₹{projection ? Math.round((projection.inflationAdjustedValuePaise !== undefined ? projection.inflationAdjustedValuePaise / 100 : projection.futureValueReal) || 0).toLocaleString('en-IN') : 0} in today's money.
               </p>
             </div>
           </div>
@@ -255,17 +310,17 @@ export function InvestmentGuidePage() {
 
       {/* Asset Classes Comparison Grid */}
       <div className="space-y-4">
-        <h3 className="text-base font-bold text-aubergine">
+        <h3 className="text-base font-bold text-theme-primary">
           Indian Asset Class Risk & Liquidity Overview
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {ASSET_CLASSES.map((asset, idx) => (
-            <Card key={idx} className="bg-white/80 border-brass/25 space-y-3">
+            <Card key={idx} className="space-y-3">
               <div className="flex items-start justify-between">
                 <div>
-                  <h4 className="text-base font-bold text-aubergine">{asset.title}</h4>
-                  <span className="text-[11px] text-aubergine/60 font-semibold">{asset.category}</span>
+                  <h4 className="text-base font-bold text-theme-primary">{asset.title}</h4>
+                  <span className="text-[11px] text-theme-muted font-semibold">{asset.category}</span>
                 </div>
                 <Badge
                   variant={asset.riskLevel.includes('High') ? 'terracotta' : 'brass'}
@@ -275,24 +330,24 @@ export function InvestmentGuidePage() {
                 </Badge>
               </div>
 
-              <p className="text-xs text-aubergine/75 leading-relaxed">
+              <p className="text-xs text-theme-muted leading-relaxed">
                 {asset.description}
               </p>
 
-              <div className="grid grid-cols-2 gap-2 text-[11px] pt-2 border-t border-brass/10">
-                <div className="p-2 rounded-lg bg-ivory-dark">
-                  <span className="text-aubergine/60 block">Time Horizon:</span>
-                  <span className="font-bold text-aubergine font-mono">{asset.timeHorizon}</span>
+              <div className="grid grid-cols-2 gap-2 text-[11px] pt-2 border-t border-theme-border">
+                <div className="p-2 rounded-lg bg-theme-subtle">
+                  <span className="text-theme-muted block">Time Horizon:</span>
+                  <span className="font-bold text-theme-primary font-mono">{asset.timeHorizon}</span>
                 </div>
-                <div className="p-2 rounded-lg bg-ivory-dark">
-                  <span className="text-aubergine/60 block">Liquidity:</span>
-                  <span className="font-bold text-aubergine font-mono">{asset.liquidity}</span>
+                <div className="p-2 rounded-lg bg-theme-subtle">
+                  <span className="text-theme-muted block">Liquidity:</span>
+                  <span className="font-bold text-theme-primary font-mono">{asset.liquidity}</span>
                 </div>
               </div>
 
-              <div className="p-2.5 rounded-lg bg-ivory-surface text-[11px] text-aubergine/80 flex items-center justify-between border border-brass/15">
+              <div className="p-2.5 rounded-lg bg-theme-subtle text-[11px] text-theme-muted flex items-center justify-between border border-theme-border">
                 <span>Taxation:</span>
-                <span className="font-mono font-semibold">{asset.taxStatus}</span>
+                <span className="font-mono font-semibold text-theme-primary">{asset.taxStatus}</span>
               </div>
             </Card>
           ))}
@@ -304,15 +359,15 @@ export function InvestmentGuidePage() {
         title="How to Verify an Investment Adviser (RIA)"
         subtitle="Protect yourself from illegal Telegram tip channels and fake PMS operators"
       >
-        <div className="space-y-3 text-xs leading-relaxed text-aubergine/80">
+        <div className="space-y-3 text-xs leading-relaxed text-theme-muted">
           <p>
-            Under SEBI regulations, anyone offering personalized investment advice for a fee must hold a valid <strong>SEBI Registered Investment Adviser (RIA)</strong> or <strong>Research Analyst (RA)</strong> license.
+            Under SEBI regulations, anyone offering personalized investment advice for a fee must hold a valid <strong className="text-theme-primary">SEBI Registered Investment Adviser (RIA)</strong> or <strong className="text-theme-primary">Research Analyst (RA)</strong> license.
           </p>
 
-          <div className="p-3.5 rounded-xl bg-ivory-dark border border-brass/20 flex items-center justify-between gap-4">
+          <div className="p-3.5 rounded-xl bg-theme-subtle border border-theme-border flex items-center justify-between gap-4">
             <div>
-              <span className="font-bold text-aubergine block">Official SEBI Intermediary Registry</span>
-              <span className="text-[11px] text-aubergine/60">Search registered advisers and verify license validity</span>
+              <span className="font-bold text-theme-primary block">Official SEBI Intermediary Registry</span>
+              <span className="text-[11px] text-theme-muted">Search registered advisers and verify license validity</span>
             </div>
             <a
               href="https://investor.sebi.gov.in/investment_advisor.html"
