@@ -32,47 +32,47 @@ export function ProfilePage() {
   const [error, setError] = useState(null);
   const [copiedLink, setCopiedLink] = useState(false);
 
-  useEffect(() => {
-    async function loadProfile() {
-      setLoading(true);
-      setError(null);
-      try {
-        if (isPersonal) {
-          // Load full personal profile from backend endpoint
-          const res = await api.get('/users/me/profile');
-          const data = res.data?.data || res.data;
+  const loadProfile = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      if (isPersonal) {
+        // Load full personal profile from backend endpoint
+        const res = await api.get('/users/me/profile');
+        const data = res.data?.data || res.data;
+        setProfile({
+          name: data.user?.name || authUser?.name,
+          username: data.user?.username || authUser?.username,
+          bio: data.user?.bio ?? authUser?.bio ?? '',
+          createdAt: data.user?.createdAt || authUser?.createdAt,
+          isProfilePublic: data.user?.isProfilePublic ?? authUser?.isProfilePublic ?? true,
+        });
+        setGamification(data.gamification);
+      } else {
+        // Public profile view via /users/profile/:username
+        const res = await api.get(`/users/profile/${encodeURIComponent(username)}`);
+        const data = res.data?.data || res.data;
+        if (data.isPrivate) {
           setProfile({
-            name: data.user?.name || authUser?.name,
-            username: data.user?.username || authUser?.username,
-            bio: data.user?.bio ?? authUser?.bio ?? '',
-            createdAt: data.user?.createdAt || authUser?.createdAt,
-            isProfilePublic: data.user?.isProfilePublic ?? authUser?.isProfilePublic ?? true,
+            name: 'Private Learner',
+            username: data.user?.username || username,
+            bio: '',
+            isProfilePublic: false,
           });
-          setGamification(data.gamification);
+          setGamification(null);
         } else {
-          // Public profile view via /users/profile/:username
-          const res = await api.get(`/users/profile/${encodeURIComponent(username)}`);
-          const data = res.data?.data || res.data;
-          if (data.isPrivate) {
-            setProfile({
-              name: 'Private Learner',
-              username: data.user?.username || username,
-              bio: '',
-              isProfilePublic: false,
-            });
-            setGamification(null);
-          } else {
-            setProfile(data.user);
-            setGamification(data.gamification);
-          }
+          setProfile(data.user);
+          setGamification(data.gamification);
         }
-      } catch (err) {
-        setError(err.response?.data?.message || err.message || 'Error loading profile');
-      } finally {
-        setLoading(false);
       }
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || 'Error loading profile');
+    } finally {
+      setLoading(false);
     }
+  };
 
+  useEffect(() => {
     loadProfile();
   }, [username, isPersonal, authUser]);
 
@@ -100,9 +100,14 @@ export function ProfilePage() {
         </div>
         <h2 className="text-lg font-bold text-theme-primary">Profile Unavailable</h2>
         <p className="text-xs text-theme-muted">{error || 'This user profile does not exist.'}</p>
-        <Link to="/leaderboard">
-          <Button variant="outline" size="sm">Explore Leaderboard</Button>
-        </Link>
+        <div className="flex items-center justify-center gap-3">
+          <Button variant="primary" size="sm" onClick={loadProfile}>
+            Retry
+          </Button>
+          <Link to="/leaderboard">
+            <Button variant="outline" size="sm">Explore Leaderboard</Button>
+          </Link>
+        </div>
       </div>
     );
   }

@@ -22,23 +22,34 @@ export function LeaderboardPage() {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    async function fetchLeaderboard() {
-      setLoading(true);
-      setError(null);
+  const fetchLeaderboard = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      // First try standard assessment route, fall back to quizzes route alias if needed
+      let res;
       try {
-        const res = await api.get('/quizzes/gamification/leaderboard');
-        if (res && res.data) {
-          setLeaderboard(res.data.leaderboard || []);
-          setCurrentUser(res.data.currentUser || null);
-        }
+        res = await api.get('/assessment/gamification/leaderboard');
       } catch (err) {
-        setError(err.response?.data?.message || err.message || 'Unable to load leaderboard');
-      } finally {
-        setLoading(false);
+        if (err.status === 404) {
+          res = await api.get('/quizzes/gamification/leaderboard');
+        } else {
+          throw err;
+        }
       }
-    }
 
+      if (res && res.data) {
+        setLeaderboard(res.data.leaderboard || []);
+        setCurrentUser(res.data.currentUser || null);
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || 'Unable to load leaderboard. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchLeaderboard();
   }, []);
 
@@ -172,8 +183,14 @@ export function LeaderboardPage() {
             Calculating authentic learning rankings...
           </div>
         ) : error ? (
-          <div className="py-8 text-center text-xs text-rose-500">
-            {error}
+          <div className="py-10 text-center max-w-sm mx-auto space-y-3">
+            <p className="text-xs text-rose-500 font-medium">{error}</p>
+            <button
+              onClick={fetchLeaderboard}
+              className="inline-flex items-center justify-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-terracotta text-white hover:bg-terracotta-dark transition-colors cursor-pointer shadow-xs"
+            >
+              Retry Loading Leaderboard
+            </button>
           </div>
         ) : filteredLeaderboard.length === 0 ? (
           <div className="py-12 text-center text-xs text-theme-muted">

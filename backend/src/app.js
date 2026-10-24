@@ -91,6 +91,7 @@ export function createApp() {
   app.use('/api/v1/dashboard', dashboardRoutes);
   app.use('/api/v1/learning', learningRoutes);
   app.use('/api/v1/assessment', quizRoutes);
+  app.use('/api/v1/quizzes', quizRoutes); // Alias ensuring backward & forward route compatibility for gamification & quizzes
   app.use('/api/v1/guidance', guidanceRoutes);
   app.use('/api/v1/ai-coach', aiCoachRoutes);
   app.use('/api/v1/insights', insightsRoutes);

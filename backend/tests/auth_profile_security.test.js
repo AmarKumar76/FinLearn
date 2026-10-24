@@ -290,4 +290,81 @@ test('FinLearn Combined Implementation: Settings, Password Security & Public Pro
     assert.strictEqual(body.data.user.email, undefined);
     assert.strictEqual(body.data.gamification, null);
   });
+
+  await suite.test('PROF-003: Unauthenticated /me/profile returns 401 Unauthorized', async () => {
+    const res = await fetch(`${baseUrl}/api/v1/users/me/profile`);
+    assert.strictEqual(res.status, 401);
+  });
+
+  await suite.test('PROF-004: Missing public profile username returns 404 Not Found', async () => {
+    const res = await fetch(`${baseUrl}/api/v1/users/profile/nonexistentuser999`);
+    assert.strictEqual(res.status, 404);
+  });
+
+  // ==========================================
+  // Part D: Leaderboard Endpoints & Consistency
+  // ==========================================
+  await suite.test('LEAD-001: Leaderboard returns 200 from both /assessment and /quizzes alias', async () => {
+    const resAssessment = await fetch(`${baseUrl}/api/v1/assessment/gamification/leaderboard`, {
+      headers: { Authorization: `Bearer ${userAToken}` },
+    });
+    assert.strictEqual(resAssessment.status, 200);
+    const bodyAssessment = await resAssessment.json();
+    assert.strictEqual(bodyAssessment.status, 'success');
+    assert.ok(Array.isArray(bodyAssessment.data.leaderboard));
+    assert.ok(bodyAssessment.data.currentUser !== undefined);
+
+    const resQuizzes = await fetch(`${baseUrl}/api/v1/quizzes/gamification/leaderboard`, {
+      headers: { Authorization: `Bearer ${userAToken}` },
+    });
+    assert.strictEqual(resQuizzes.status, 200);
+    const bodyQuizzes = await resQuizzes.json();
+    assert.strictEqual(bodyQuizzes.status, 'success');
+    assert.ok(Array.isArray(bodyQuizzes.data.leaderboard));
+  });
+
+  await suite.test('LEAD-002: Leaderboard excludes passwords, tokens, and private user fields', async () => {
+    const res = await fetch(`${baseUrl}/api/v1/assessment/gamification/leaderboard`, {
+      headers: { Authorization: `Bearer ${userAToken}` },
+    });
+    const body = await res.json();
+    assert.strictEqual(res.status, 200);
+    for (const entry of body.data.leaderboard) {
+      assert.strictEqual(entry.passwordHash, undefined);
+      assert.strictEqual(entry.email, undefined);
+      assert.strictEqual(entry.resetPasswordToken, undefined);
+      assert.strictEqual(entry.resetPasswordExpires, undefined);
+    }
+  });
+
+  await suite.test('LEAD-003: Leaderboard sorting and tie-breaking are deterministic', async () => {
+    // Setup identical XP users
+    const gamA = await GamificationProfile.findOne({ userId: userAId });
+    if (gamA) {
+      gamA.totalXp = 500;
+      gamA.currentStreak = 5;
+      await gamA.save();
+    }
+    const gamB = await GamificationProfile.findOne({ userId: userBId });
+    if (gamB) {
+      gamB.totalXp = 500;
+      gamB.currentStreak = 5;
+      await gamB.save();
+    }
+
+    const res1 = await fetch(`${baseUrl}/api/v1/assessment/gamification/leaderboard`, {
+      headers: { Authorization: `Bearer ${userAToken}` },
+    });
+    const body1 = await res1.json();
+
+    const res2 = await fetch(`${baseUrl}/api/v1/assessment/gamification/leaderboard`, {
+      headers: { Authorization: `Bearer ${userAToken}` },
+    });
+    const body2 = await res2.json();
+
+    assert.deepStrictEqual(
+      body1.data.leaderboard.map((e) => e.userId),
+      body2.data.leaderboard.map((e) => e.userId)
+    );
+  });
 });

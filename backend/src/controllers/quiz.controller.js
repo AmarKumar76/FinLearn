@@ -399,10 +399,10 @@ export async function getLeaderboard(req, res, next) {
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 20));
     const skip = (page - 1) * limit;
 
-    // Fetch top profiles sorted by totalXp descending, then currentStreak descending
+    // Fetch top profiles sorted by totalXp descending, currentStreak descending, createdAt ascending, and _id ascending for deterministic tie-breaking
     const [topProfiles, totalCount] = await Promise.all([
       GamificationProfile.find()
-        .sort({ totalXp: -1, currentStreak: -1, createdAt: 1 })
+        .sort({ totalXp: -1, currentStreak: -1, createdAt: 1, _id: 1 })
         .skip(skip)
         .limit(limit)
         .populate('userId', 'name username bio isProfilePublic createdAt')
@@ -430,7 +430,7 @@ export async function getLeaderboard(req, res, next) {
       };
     });
 
-    // Compute current user's actual global rank
+    // Compute current user's actual global rank with deterministic tie-breaking
     let currentUserRank = null;
     let currentUserProfile = null;
     if (req.user) {
@@ -440,6 +440,8 @@ export async function getLeaderboard(req, res, next) {
           $or: [
             { totalXp: { $gt: myProfile.totalXp } },
             { totalXp: myProfile.totalXp, currentStreak: { $gt: myProfile.currentStreak } },
+            { totalXp: myProfile.totalXp, currentStreak: myProfile.currentStreak, createdAt: { $lt: myProfile.createdAt } },
+            { totalXp: myProfile.totalXp, currentStreak: myProfile.currentStreak, createdAt: myProfile.createdAt, _id: { $lt: myProfile._id } },
           ],
         });
         currentUserRank = higherCount + 1;
