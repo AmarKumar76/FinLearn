@@ -1,11 +1,14 @@
 import React from 'react';
-import { Menu, Bell, User, LogOut } from 'lucide-react';
+import { Menu, Bell, User, LogOut, Sun, Moon, Sparkles } from 'lucide-react';
 import { Badge } from '../common/Badge';
+import { ThemeSelector } from '../common/ThemeSelector';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 
 export function Header({ onOpenSidebar }) {
   const { user, logout } = useAuth();
+  const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -14,33 +17,35 @@ export function Header({ onOpenSidebar }) {
   };
 
   return (
-    <header className="h-16 border-b border-brass/20 bg-ivory/80 backdrop-blur-md sticky top-0 z-30 px-4 lg:px-8 flex items-center justify-between">
+    <header className="h-16 border-b border-theme-border bg-theme-surface/80 backdrop-blur-md sticky top-0 z-30 px-4 lg:px-8 flex items-center justify-between transition-colors">
       {/* Left: Mobile hamburger & breadcrumb */}
       <div className="flex items-center gap-3">
         <button
           onClick={onOpenSidebar}
-          className="p-2 rounded-lg text-aubergine hover:bg-lilac/30 lg:hidden focus:outline-none focus:ring-2 focus:ring-terracotta"
+          className="p-2 rounded-lg text-theme-primary hover:bg-theme-subtle lg:hidden focus:outline-none focus:ring-2 focus:ring-terracotta"
           aria-label="Open sidebar navigation"
         >
           <Menu className="w-5 h-5" />
         </button>
         <div>
-          <h1 className="text-sm sm:text-base font-bold text-aubergine tracking-tight flex items-center gap-2">
+          <h1 className="text-sm sm:text-base font-bold text-theme-primary tracking-tight flex items-center gap-2">
             <span>FinLearn Workspace</span>
           </h1>
-          <p className="text-[11px] text-aubergine/60 hidden md:block">
+          <p className="text-[11px] text-theme-muted hidden md:block">
             INR Integer Paise Precision • Grounded AI • Zero Unverified Money Transfers
           </p>
         </div>
       </div>
 
-      {/* Right: Notifications & profile */}
-      <div className="flex items-center gap-3">
+      {/* Right: Theme Toggle, Notifications & profile */}
+      <div className="flex items-center gap-2 sm:gap-3">
+        {/* Reusable Segmented 3-Option Theme Control */}
+        <ThemeSelector size="sm" />
 
         {/* Notifications link */}
         <Link
           to="/notifications"
-          className="p-2 rounded-lg text-aubergine hover:bg-lilac/30 text-aubergine/80 transition-colors relative"
+          className="p-2 rounded-lg text-theme-primary hover:bg-theme-subtle transition-colors relative"
           aria-label="View notifications"
           title="Notifications"
         >
@@ -50,17 +55,17 @@ export function Header({ onOpenSidebar }) {
 
         {/* Profile info */}
         <Link
-          to="/settings"
-          className="flex items-center gap-2 pl-2 border-l border-brass/20 hover:opacity-80 transition-opacity"
+          to="/profile"
+          className="flex items-center gap-2 pl-2 border-l border-theme-border hover:opacity-80 transition-opacity"
         >
-          <div className="w-8 h-8 rounded-full bg-aubergine text-ivory flex items-center justify-center font-bold text-xs shadow-xs">
+          <div className="w-8 h-8 rounded-full bg-terracotta text-white flex items-center justify-center font-bold text-xs shadow-xs">
             {user?.name ? user.name.charAt(0).toUpperCase() : <User className="w-4 h-4" />}
           </div>
           <div className="hidden md:block text-left text-xs">
-            <span className="font-semibold text-aubergine block leading-tight truncate max-w-[120px]">
+            <span className="font-semibold text-theme-primary block leading-tight truncate max-w-[120px]">
               {user?.name || 'Learner'}
             </span>
-            <span className="text-[10px] text-aubergine/60 block capitalize">
+            <span className="text-[10px] text-theme-muted block capitalize">
               {user?.role || 'Guest'}
             </span>
           </div>
@@ -69,7 +74,7 @@ export function Header({ onOpenSidebar }) {
         {/* Logout action button */}
         <button
           onClick={handleLogout}
-          className="p-2 rounded-lg text-aubergine/70 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+          className="p-2 rounded-lg text-theme-muted hover:text-rose-500 hover:bg-rose-500/10 transition-colors"
           title="Sign Out"
           aria-label="Sign Out"
         >

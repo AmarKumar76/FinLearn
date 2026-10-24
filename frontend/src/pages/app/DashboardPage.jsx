@@ -180,74 +180,74 @@ export function DashboardPage() {
       {/* Summary Cards Row (Income, Expenses, Net Cash Flow, Gamification XP) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Income Card */}
-        <Card className="bg-white/80 border-brass/25">
+        <Card className="bg-theme-surface border-theme-border">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-aubergine/60">
+            <span className="text-xs font-bold uppercase tracking-wider text-theme-muted">
               Total Income
             </span>
-            <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
               <ArrowUpRight className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-black text-aubergine">
+          <div className="text-2xl font-black text-theme-primary">
             {formatPaiseToINR(financials.totalIncomePaise)}
           </div>
-          <p className="text-[11px] text-aubergine/60 mt-1">
+          <p className="text-[11px] text-theme-muted mt-1">
             Current reporting period
           </p>
         </Card>
 
         {/* Total Expenses Card */}
-        <Card className="bg-white/80 border-brass/25">
+        <Card className="bg-theme-surface border-theme-border">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-aubergine/60">
+            <span className="text-xs font-bold uppercase tracking-wider text-theme-muted">
               Total Expenses
             </span>
-            <div className="w-8 h-8 rounded-lg bg-rose-100 text-rose-800 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-500 flex items-center justify-center">
               <ArrowDownRight className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-black text-aubergine">
+          <div className="text-2xl font-black text-theme-primary">
             {formatPaiseToINR(financials.totalExpensePaise)}
           </div>
-          <p className="text-[11px] text-aubergine/60 mt-1">
+          <p className="text-[11px] text-theme-muted mt-1">
             Current reporting period
           </p>
         </Card>
 
         {/* Net Cash Flow Card */}
-        <Card className="bg-white/80 border-brass/25">
+        <Card className="bg-theme-surface border-theme-border">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-aubergine/60">
+            <span className="text-xs font-bold uppercase tracking-wider text-theme-muted">
               Net Cash Flow
             </span>
             <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-              financials.netCashFlowPaise >= 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+              financials.netCashFlowPaise >= 0 ? 'bg-emerald-500/10 text-emerald-600' : 'bg-rose-500/10 text-rose-500'
             }`}>
               <Wallet className="w-4 h-4" />
             </div>
           </div>
           <div className={`text-2xl font-black ${
-            financials.netCashFlowPaise >= 0 ? 'text-aubergine' : 'text-rose-700'
+            financials.netCashFlowPaise >= 0 ? 'text-theme-primary' : 'text-rose-500'
           }`}>
             {formatPaiseToINR(financials.netCashFlowPaise)}
           </div>
-          <p className="text-[11px] text-aubergine/60 mt-1">
+          <p className="text-[11px] text-theme-muted mt-1">
             {financials.netCashFlowPaise >= 0 ? 'Surplus available' : 'Deficit this period'}
           </p>
         </Card>
 
         {/* Gamification Mastery Card */}
-        <Card className="bg-white/80 border-brass/25">
+        <Card className="bg-theme-surface border-theme-border">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-aubergine/60">
+            <span className="text-xs font-bold uppercase tracking-wider text-theme-muted">
               Learning XP & Streak
             </span>
-            <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-amber-600" />
+            <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-amber-500" />
             </div>
           </div>
-          <div className="text-2xl font-black text-aubergine font-mono flex items-center gap-1.5">
+          <div className="text-2xl font-black text-theme-primary font-mono flex items-center gap-1.5">
             <span>{data?.gamification?.totalXp || 0}</span>
             <span className="text-xs font-bold text-amber-600 uppercase font-sans">XP</span>
           </div>

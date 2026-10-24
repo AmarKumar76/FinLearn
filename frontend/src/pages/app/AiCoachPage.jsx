@@ -189,12 +189,12 @@ export function AiCoachPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-black text-aubergine">
+            <h1 className="text-2xl font-black text-theme-primary">
               AI Money Coach
             </h1>
             <Badge variant="terracotta" size="sm">Grounded Education</Badge>
           </div>
-          <p className="text-xs text-aubergine/70">
+          <p className="text-xs text-theme-muted">
             Backed by approved learning sources • Zero personalized advice • Uncertainty disclosed
           </p>
         </div>
@@ -210,7 +210,7 @@ export function AiCoachPage() {
       </div>
 
       {/* Safety Notice Banner */}
-      <div className="p-3.5 rounded-xl bg-ivory-dark border border-brass/25 flex items-start gap-2.5 text-xs text-aubergine/80">
+      <div className="p-3.5 rounded-xl bg-theme-subtle border border-theme-border flex items-start gap-2.5 text-xs text-theme-primary">
         <ShieldAlert className="w-4 h-4 text-terracotta shrink-0 mt-0.5" />
         <p className="leading-relaxed">
           <strong>Educational Grounding Guardrail:</strong> The AI Coach answers strictly using FinLearn's reviewed curriculum and official sources. It never provides speculative stock tips, asks for OTPs/PINs, or promises loan approvals.
@@ -225,7 +225,7 @@ export function AiCoachPage() {
       )}
 
       {/* Chat Messages Card */}
-      <Card className="bg-white/80 border-brass/25 min-h-[460px] flex flex-col justify-between p-4 sm:p-6 space-y-4">
+      <Card className="bg-theme-surface border-theme-border min-h-[460px] flex flex-col justify-between p-4 sm:p-6 space-y-4">
         {/* Messages List */}
         <div className="space-y-4 overflow-y-auto max-h-[520px] pr-2">
           {messages.map((m) => {
@@ -236,14 +236,14 @@ export function AiCoachPage() {
                 className={`flex gap-3 ${isCoach ? 'items-start' : 'items-end justify-end'}`}
               >
                 {isCoach && (
-                  <div className="w-8 h-8 rounded-lg bg-aubergine text-ivory flex items-center justify-center shrink-0 shadow-xs">
-                    <Sparkles className="w-4 h-4 text-brass-light" />
+                  <div className="w-8 h-8 rounded-lg bg-terracotta text-white flex items-center justify-center shrink-0 shadow-xs">
+                    <Sparkles className="w-4 h-4 text-white" />
                   </div>
                 )}
 
                 <div className={`p-4 rounded-2xl max-w-xl text-xs sm:text-sm space-y-2.5 ${
                   isCoach
-                    ? 'bg-ivory-dark border border-brass/20 text-aubergine shadow-xs'
+                    ? 'bg-theme-subtle border border-theme-border text-theme-primary shadow-xs'
                     : 'bg-terracotta text-white font-medium ml-12 rounded-br-xs'
                 }`}>
                   <p className="leading-relaxed whitespace-pre-line">{m.text}</p>

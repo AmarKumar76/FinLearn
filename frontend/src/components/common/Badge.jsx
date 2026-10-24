@@ -10,14 +10,14 @@ export function Badge({
   ...props
 }) {
   const variants = {
-    default: 'bg-ivory-dark text-aubergine border border-brass/20',
-    terracotta: 'bg-terracotta/10 text-terracotta border border-terracotta/20',
-    aubergine: 'bg-aubergine text-ivory border border-aubergine',
-    brass: 'bg-brass/10 text-brass-dark border border-brass/30',
-    lilac: 'bg-lilac/30 text-aubergine border border-lilac',
-    success: 'bg-emerald-50 text-emerald-800 border border-emerald-200',
-    warning: 'bg-amber-50 text-amber-800 border border-amber-200',
-    danger: 'bg-rose-50 text-rose-800 border border-rose-200',
+    default: 'bg-theme-subtle text-theme-primary border border-theme-border',
+    terracotta: 'bg-terracotta/15 text-terracotta border border-terracotta/30',
+    aubergine: 'bg-theme-sidebar text-theme-sidebar-text border border-theme-sidebar-border',
+    brass: 'bg-brass/15 text-brass-dark dark:text-brass-light border border-brass/35',
+    lilac: 'bg-lilac/25 text-theme-primary border border-lilac/50',
+    success: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30',
+    warning: 'bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30',
+    danger: 'bg-rose-500/15 text-rose-700 dark:text-rose-400 border border-rose-500/30',
   };
 
   const sizes = {

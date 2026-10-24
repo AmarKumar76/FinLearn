@@ -43,7 +43,7 @@ export function Modal({
       <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
         <div
           className={cn(
-            'relative transform overflow-hidden rounded-2xl bg-ivory text-left shadow-2xl transition-all sm:my-8 w-full border border-brass/30',
+            'relative transform overflow-hidden rounded-2xl bg-theme-surface text-left shadow-2xl transition-all sm:my-8 w-full border border-theme-border-strong',
             maxWidth,
             className
           )}
@@ -52,21 +52,21 @@ export function Modal({
           aria-labelledby="modal-title"
         >
           {/* Header */}
-          <div className="flex items-start justify-between px-6 pt-6 pb-4 border-b border-brass/15 bg-white/40">
+          <div className="flex items-start justify-between px-6 pt-6 pb-4 border-b border-theme-border bg-theme-subtle/50">
             <div>
               {title && (
-                <h3 id="modal-title" className="text-lg font-bold text-aubergine">
+                <h3 id="modal-title" className="text-lg font-bold text-theme-primary">
                   {title}
                 </h3>
               )}
               {subtitle && (
-                <p className="text-xs text-aubergine/65 mt-0.5">{subtitle}</p>
+                <p className="text-xs text-theme-muted mt-0.5">{subtitle}</p>
               )}
             </div>
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg p-1.5 text-aubergine/60 hover:bg-lilac/30 hover:text-aubergine transition-colors focus:outline-none focus:ring-2 focus:ring-terracotta"
+              className="rounded-lg p-1.5 text-theme-muted hover:bg-theme-subtle hover:text-theme-primary transition-colors focus:outline-none focus:ring-2 focus:ring-terracotta"
               aria-label="Close dialog"
             >
               <X className="w-5 h-5" />

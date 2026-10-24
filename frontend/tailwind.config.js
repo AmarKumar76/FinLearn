@@ -4,6 +4,7 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -36,6 +37,23 @@ export default {
           dark: '#BAA2BC',
           soft: '#F4EEF5',
         },
+        theme: {
+          app: 'var(--bg-app)',
+          surface: 'var(--bg-surface)',
+          elevated: 'var(--bg-surface-elevated)',
+          subtle: 'var(--bg-surface-subtle)',
+          sidebar: 'var(--bg-sidebar)',
+          'sidebar-border': 'var(--bg-sidebar-border)',
+          border: 'var(--border-subtle)',
+          'border-strong': 'var(--border-strong)',
+          primary: 'var(--text-primary)',
+          secondary: 'var(--text-secondary)',
+          muted: 'var(--text-muted)',
+          'sidebar-text': 'var(--sidebar-text)',
+          'sidebar-muted': 'var(--sidebar-text-muted)',
+          'sidebar-icon': 'var(--sidebar-icon)',
+          'sidebar-hover': 'var(--sidebar-hover)',
+        }
       },
       fontFamily: {
         sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],

@@ -36,7 +36,7 @@ export function AppLayout() {
   }, []);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-ivory text-aubergine">
+    <div className="flex h-screen overflow-hidden bg-theme-app text-theme-primary transition-colors duration-200">
       {/* Sidebar navigation */}
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 

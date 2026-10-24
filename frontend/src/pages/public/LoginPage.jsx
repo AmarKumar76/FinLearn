@@ -4,6 +4,7 @@ import { Card } from '../../components/common/Card';
 import { Input } from '../../components/common/Input';
 import { Button } from '../../components/common/Button';
 import { useAuth } from '../../context/AuthContext';
+import { ThemeSelector } from '../../components/common/ThemeSelector';
 import { ArrowRight, AlertCircle, Eye, EyeOff, Info } from 'lucide-react';
 
 export function LoginPage() {
@@ -48,24 +49,29 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-ivory flex flex-col justify-center py-12 px-6 sm:px-12 relative overflow-hidden">
+    <div className="min-h-screen bg-theme-app text-theme-primary flex flex-col justify-center py-12 px-6 sm:px-12 relative overflow-hidden transition-colors">
       {/* Background decoration */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-terracotta/5 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-brass/10 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Top Bar with Brand & Public Theme Selector */}
+      <div className="fixed top-4 right-4 sm:top-6 sm:right-6 z-40">
+        <ThemeSelector size="sm" />
+      </div>
 
       {/* Toast Notification */}
       {toastMessage && (
         <div
           role="status"
           aria-live="polite"
-          className="fixed top-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl bg-aubergine text-ivory text-xs font-semibold shadow-xl border border-brass/30 animate-in fade-in slide-in-from-top-2 duration-200"
+          className="fixed top-6 left-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl bg-theme-elevated text-theme-primary text-xs font-semibold shadow-xl border border-theme-border-strong animate-in fade-in slide-in-from-top-2 duration-200"
         >
           <Info className="w-4 h-4 text-terracotta shrink-0" />
           <span>{toastMessage}</span>
           <button
             type="button"
             onClick={() => setToastMessage('')}
-            className="ml-2 text-ivory/60 hover:text-ivory transition-colors text-sm font-bold"
+            className="ml-2 text-theme-muted hover:text-theme-primary transition-colors text-sm font-bold"
             aria-label="Dismiss notification"
           >
             ×
@@ -74,19 +80,19 @@ export function LoginPage() {
       )}
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        <Link to="/" className="inline-flex items-center gap-2 mb-6 text-aubergine font-bold hover:text-terracotta transition-colors">
-          <div className="w-8 h-8 rounded-lg bg-terracotta flex items-center justify-center font-bold text-white text-sm">
+        <Link to="/" className="inline-flex items-center gap-2 mb-6 text-theme-primary font-bold hover:text-terracotta transition-colors">
+          <div className="w-8 h-8 rounded-lg bg-terracotta flex items-center justify-center font-bold text-white text-sm shadow-xs">
             ₹
           </div>
           <span className="text-xl font-extrabold tracking-tight">FinLearn</span>
         </Link>
 
-        <Card className="bg-white/90 border-brass/25 shadow-lg p-6 sm:p-8">
+        <Card className="bg-theme-surface border-theme-border-strong shadow-xl p-6 sm:p-8">
           <div className="mb-6 space-y-1">
             <div>
-              <h2 className="text-xl font-black text-aubergine">Sign In</h2>
+              <h2 className="text-xl font-black text-theme-primary">Sign In</h2>
             </div>
-            <p className="text-xs text-aubergine/70">
+            <p className="text-xs text-theme-muted font-medium">
               Access your unified personal finance and learning workspace
             </p>
           </div>
@@ -114,7 +120,7 @@ export function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
-                  className="text-aubergine/50 hover:text-aubergine focus:outline-none focus:text-terracotta p-1 transition-colors rounded"
+                  className="text-theme-muted hover:text-theme-primary focus:outline-none focus:text-terracotta p-1 transition-colors rounded"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                   tabIndex={0}
                 >
@@ -127,8 +133,17 @@ export function LoginPage() {
               }
             />
 
+            <div className="flex items-center justify-end">
+              <Link
+                to="/forgot-password"
+                className="text-xs font-semibold text-terracotta hover:text-terracotta-hover transition-colors"
+              >
+                Forgot Password?
+              </Link>
+            </div>
+
             {error && (
-              <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 flex items-start gap-2 text-xs text-rose-700">
+              <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 flex items-start gap-2 text-xs text-rose-600 dark:text-rose-400">
                 <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                 <span className="font-semibold">{error}</span>
               </div>
@@ -149,10 +164,10 @@ export function LoginPage() {
           {/* OR Divider */}
           <div className="relative my-5">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-brass/20" />
+              <div className="w-full border-t border-theme-border" />
             </div>
             <div className="relative flex justify-center text-[11px] uppercase tracking-wider">
-              <span className="bg-white/95 px-3 text-aubergine/60 font-bold">
+              <span className="bg-theme-surface px-3 text-theme-muted font-bold">
                 OR
               </span>
             </div>
@@ -162,7 +177,7 @@ export function LoginPage() {
           <button
             type="button"
             onClick={handleGoogleClick}
-            className="w-full inline-flex items-center justify-center gap-2.5 px-4 py-2.5 rounded-lg border border-brass/35 bg-ivory/60 hover:bg-ivory text-aubergine text-sm font-semibold transition-all hover:border-brass/70 focus:outline-none focus:ring-2 focus:ring-terracotta shadow-sm active:scale-[0.99]"
+            className="w-full inline-flex items-center justify-center gap-2.5 px-4 py-2.5 rounded-lg border border-theme-border-strong bg-theme-subtle hover:bg-theme-elevated text-theme-primary text-sm font-semibold transition-all hover:border-theme-border focus:outline-none focus:ring-2 focus:ring-terracotta shadow-xs active:scale-[0.99]"
             aria-label="Continue with Google"
           >
             <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
@@ -186,9 +201,9 @@ export function LoginPage() {
             <span>Continue with Google</span>
           </button>
 
-          <div className="mt-6 pt-5 border-t border-brass/15 text-center text-xs text-aubergine/70">
+          <div className="mt-6 pt-5 border-t border-theme-border text-center text-xs text-theme-muted">
             Don't have an account yet?{' '}
-            <Link to="/signup" className="font-bold text-terracotta hover:underline">
+            <Link to="/signup" className="font-bold text-terracotta hover:underline ml-1">
               Create an account
             </Link>
           </div>

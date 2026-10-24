@@ -16,7 +16,7 @@ export function Select({
   return (
     <div className="w-full space-y-1.5">
       {label && (
-        <label htmlFor={selectId} className="block text-xs font-semibold text-aubergine uppercase tracking-wider">
+        <label htmlFor={selectId} className="block text-xs font-semibold text-theme-primary uppercase tracking-wider">
           {label}
           {required && <span className="text-terracotta ml-1">*</span>}
         </label>
@@ -25,23 +25,23 @@ export function Select({
         id={selectId}
         required={required}
         className={cn(
-          'w-full px-3.5 py-2.5 rounded-lg border bg-ivory-surface text-aubergine text-sm transition-colors',
+          'w-full px-3.5 py-2.5 rounded-lg border bg-theme-surface text-theme-primary text-sm transition-colors',
           'focus:outline-none focus:ring-2 focus:ring-terracotta focus:border-transparent',
           error
             ? 'border-red-500 focus:ring-red-500'
-            : 'border-brass/30 hover:border-brass/60',
+            : 'border-theme-border hover:border-theme-border-strong',
           className
         )}
         {...props}
       >
         {options.map((opt) => (
-          <option key={opt.value} value={opt.value}>
+          <option key={opt.value} value={opt.value} className="bg-theme-surface text-theme-primary">
             {opt.label}
           </option>
         ))}
       </select>
-      {error && <p className="text-xs text-red-600 font-medium">{error}</p>}
-      {helperText && !error && <p className="text-xs text-aubergine/60">{helperText}</p>}
+      {error && <p className="text-xs text-red-500 font-medium">{error}</p>}
+      {helperText && !error && <p className="text-xs text-theme-muted">{helperText}</p>}
     </div>
   );
 }

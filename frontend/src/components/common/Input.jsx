@@ -16,7 +16,7 @@ export function Input({
   return (
     <div className="w-full space-y-1.5">
       {label && (
-        <label htmlFor={inputId} className="block text-xs font-semibold text-aubergine uppercase tracking-wider">
+        <label htmlFor={inputId} className="block text-xs font-semibold text-theme-primary uppercase tracking-wider">
           {label}
           {required && <span className="text-terracotta ml-1">*</span>}
         </label>
@@ -27,11 +27,12 @@ export function Input({
           type={type}
           required={required}
           className={cn(
-            'w-full px-3.5 py-2.5 rounded-lg border bg-ivory-surface text-aubergine placeholder:text-aubergine/40 text-sm transition-colors',
+            'w-full px-3.5 py-2.5 rounded-lg border bg-theme-surface text-theme-primary placeholder:text-theme-muted text-sm transition-colors',
             'focus:outline-none focus:ring-2 focus:ring-terracotta focus:border-transparent',
+            'disabled:opacity-60 disabled:cursor-not-allowed',
             error
               ? 'border-red-500 focus:ring-red-500'
-              : 'border-brass/30 hover:border-brass/60',
+              : 'border-theme-border hover:border-theme-border-strong',
             props.endAdornment ? 'pr-10' : '',
             className
           )}
@@ -41,16 +42,16 @@ export function Input({
           })()}
         />
         {props.endAdornment && (
-          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-auto">
+          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-auto text-theme-muted hover:text-theme-primary">
             {props.endAdornment}
           </div>
         )}
       </div>
       {error && (
-        <p className="text-xs text-red-600 font-medium">{error}</p>
+        <p className="text-xs text-red-500 font-medium">{error}</p>
       )}
       {helperText && !error && (
-        <p className="text-xs text-aubergine/60">{helperText}</p>
+        <p className="text-xs text-theme-muted">{helperText}</p>
       )}
     </div>
   );

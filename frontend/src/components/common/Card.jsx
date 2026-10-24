@@ -13,31 +13,31 @@ export function Card({
   ...props
 }) {
   const variants = {
-    default: 'bg-white/70 border border-brass/20 shadow-sm backdrop-blur-sm',
-    flat: 'bg-ivory-dark border border-brass/15',
-    elevated: 'bg-white border border-brass/25 shadow-md',
+    default: 'bg-theme-surface border border-theme-border shadow-sm backdrop-blur-sm',
+    flat: 'bg-theme-subtle border border-theme-border',
+    elevated: 'bg-theme-elevated border border-theme-border-strong shadow-md',
     brand: 'bg-aubergine text-ivory border border-aubergine-light',
   };
 
   return (
     <div
       className={cn(
-        'rounded-xl p-5 transition-shadow',
+        'rounded-xl p-5 transition-colors duration-200',
         variants[variant],
         className
       )}
       {...props}
     >
       {(title || subtitle || action) && (
-        <div className={cn('flex items-start justify-between pb-4 mb-4 border-b border-brass/10', headerClassName)}>
+        <div className={cn('flex items-start justify-between pb-4 mb-4 border-b border-theme-border', headerClassName)}>
           <div>
             {title && (
-              <h3 className={cn('text-base font-semibold', variant === 'brand' ? 'text-ivory' : 'text-aubergine')}>
+              <h3 className={cn('text-base font-semibold', variant === 'brand' ? 'text-ivory' : 'text-theme-primary')}>
                 {title}
               </h3>
             )}
             {subtitle && (
-              <p className={cn('text-xs mt-0.5', variant === 'brand' ? 'text-lilac' : 'text-aubergine/60')}>
+              <p className={cn('text-xs mt-0.5', variant === 'brand' ? 'text-lilac' : 'text-theme-muted')}>
                 {subtitle}
               </p>
             )}

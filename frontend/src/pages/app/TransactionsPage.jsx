@@ -154,10 +154,10 @@ export function TransactionsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-aubergine">
+          <h1 className="text-2xl font-black text-theme-primary">
             Transactions & Expense Diary
           </h1>
-          <p className="text-xs text-aubergine/70">
+          <p className="text-xs text-theme-muted mt-1">
             Real user-owned records stored in integer paise • Zero float rounding distortion
           </p>
         </div>
@@ -176,7 +176,7 @@ export function TransactionsPage() {
       </div>
 
       {/* Filter and Search Bar */}
-      <Card className="bg-white/80 border-brass/25">
+      <Card>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <Tabs
             activeTab={activeTab}
@@ -190,20 +190,20 @@ export function TransactionsPage() {
 
           <div className="flex flex-wrap items-center gap-3">
             <div className="relative min-w-[200px]">
-              <Search className="w-4 h-4 text-aubergine/40 absolute left-3 top-3 pointer-events-none" />
+              <Search className="w-4 h-4 text-theme-muted absolute left-3 top-3 pointer-events-none" />
               <input
                 type="text"
                 placeholder="Search transactions..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 text-xs rounded-lg border border-brass/30 bg-ivory-surface text-aubergine focus:outline-none focus:ring-2 focus:ring-terracotta"
+                className="w-full pl-9 pr-3 py-2 text-xs rounded-lg border border-theme-border bg-theme-subtle text-theme-primary focus:outline-none focus:ring-2 focus:ring-terracotta"
               />
             </div>
 
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="text-xs px-3 py-2 rounded-lg border border-brass/30 bg-ivory-surface text-aubergine focus:outline-none focus:ring-2 focus:ring-terracotta"
+              className="text-xs px-3 py-2 rounded-lg border border-theme-border bg-theme-subtle text-theme-primary focus:outline-none focus:ring-2 focus:ring-terracotta"
             >
               <option value="all">All Categories</option>
               {CATEGORIES.map((cat) => (
@@ -265,11 +265,11 @@ export function TransactionsPage() {
                     )}
                   </div>
                   <div className="min-w-0">
-                    <h4 className="text-sm font-bold text-aubergine truncate">
+                    <h4 className="text-sm font-bold text-theme-primary truncate">
                       {txn.title}
                     </h4>
-                    <div className="flex items-center gap-2 text-[11px] text-aubergine/60 mt-0.5">
-                      <span className="font-medium text-aubergine/80">
+                    <div className="flex items-center gap-2 text-[11px] text-theme-muted mt-0.5">
+                      <span className="font-medium text-theme-secondary">
                         {txn.category}
                       </span>
                       <span>•</span>
@@ -292,7 +292,7 @@ export function TransactionsPage() {
                 <div className="flex items-center gap-4 shrink-0">
                   <span
                     className={`font-mono font-bold text-sm sm:text-base ${
-                      isIncome ? 'text-emerald-700' : 'text-aubergine'
+                      isIncome ? 'text-emerald-600 dark:text-emerald-400' : 'text-theme-primary'
                     }`}
                   >
                     {isIncome ? '+' : '-'}
@@ -301,7 +301,7 @@ export function TransactionsPage() {
 
                   <button
                     onClick={() => handleDelete(txn.id)}
-                    className="p-1.5 rounded-lg text-aubergine/40 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                    className="p-1.5 rounded-lg text-theme-muted hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
                     title="Delete record"
                     aria-label="Delete transaction"
                   >
@@ -327,8 +327,8 @@ export function TransactionsPage() {
               onClick={() => setType('expense')}
               className={`py-2 px-3 text-xs font-bold rounded-lg border transition-colors ${
                 type === 'expense'
-                  ? 'bg-rose-50 border-rose-300 text-rose-700'
-                  : 'bg-white border-brass/25 text-aubergine/70 hover:bg-ivory'
+                  ? 'bg-rose-50 dark:bg-rose-950/50 border-rose-300 dark:border-rose-800 text-rose-700 dark:text-rose-300'
+                  : 'bg-theme-subtle border-theme-border text-theme-muted hover:text-theme-primary hover:bg-theme-elevated'
               }`}
             >
               Expense (-)
@@ -338,8 +338,8 @@ export function TransactionsPage() {
               onClick={() => setType('income')}
               className={`py-2 px-3 text-xs font-bold rounded-lg border transition-colors ${
                 type === 'income'
-                  ? 'bg-emerald-50 border-emerald-300 text-emerald-700'
-                  : 'bg-white border-brass/25 text-aubergine/70 hover:bg-ivory'
+                  ? 'bg-emerald-50 dark:bg-emerald-950/50 border-emerald-300 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300'
+                  : 'bg-theme-subtle border-theme-border text-theme-muted hover:text-theme-primary hover:bg-theme-elevated'
               }`}
             >
               Income (+)
