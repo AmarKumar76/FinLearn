@@ -70,6 +70,23 @@ test('FinLearn Phase 3 Authentication, RBAC & Security Test Suite', async (suite
     assert.ok(setCookie.toLowerCase().includes('httponly'), 'Cookie must be HttpOnly');
   });
 
+  await suite.test('AUTH-001b: Successful user registration via /signup alias', async () => {
+    const res = await fetch(`${baseUrl}/api/v1/auth/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: 'Pooja Verma',
+        email: 'pooja@finlearntest.local',
+        password: 'ValidPassword123!',
+      }),
+    });
+
+    const body = await res.json();
+    assert.strictEqual(res.status, 201);
+    assert.strictEqual(body.status, 'success');
+    assert.strictEqual(body.data.user.email, 'pooja@finlearntest.local');
+  });
+
   await suite.test('AUTH-002: Rejection of duplicate email (case-insensitive normalization)', async () => {
     const res = await fetch(`${baseUrl}/api/v1/auth/register`, {
       method: 'POST',
