@@ -23,17 +23,28 @@ import { errorHandler } from './middleware/errorHandler.js';
 export function createApp() {
   const app = express();
 
+  // Trust first proxy (Render / Cloudflare) so Express rate-limit and req.ip accurately read client IP
+  app.set('trust proxy', 1);
+
   // Security Headers
   app.use(helmet({
     crossOriginResourcePolicy: { policy: 'cross-origin' },
   }));
 
   // CORS Configuration
-  const allowedOrigins = [
-    config.frontendUrl,
-    'http://localhost:5173',
-    'http://localhost:5174',
-  ].filter(Boolean);
+  const configuredOrigins = (config.frontendUrl || '')
+    .split(',')
+    .map((o) => o.trim())
+    .filter(Boolean);
+
+  const allowedOrigins = Array.from(
+    new Set([
+      ...configuredOrigins,
+      'https://fin-learn-omega.vercel.app',
+      'http://localhost:5173',
+      'http://localhost:5174',
+    ])
+  );
 
   app.use(cors({
     origin: (origin, callback) => {

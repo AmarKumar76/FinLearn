@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { Button } from '../common/Button';
 import { Loading } from '../common/Loading';
+import { API_BASE_URL } from '../../services/api';
 
 // Configure Mozilla PDF.js worker using Vite asset URL resolution
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -85,8 +86,7 @@ export function PdfReaderModal({ isOpen, onClose, materialId, title }) {
           headers['Authorization'] = `Bearer ${token}`;
         }
 
-        const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/v1';
-        const url = `${baseUrl}/learning/materials/${materialId}/download`;
+        const url = `${API_BASE_URL}/learning/materials/${materialId}/download`;
 
         const response = await fetch(url, {
           headers,

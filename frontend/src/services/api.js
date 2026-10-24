@@ -1,7 +1,12 @@
-/**
- * Shared API Client configured with VITE_API_BASE_URL
- */
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/v1';
+const PRODUCTION_API_URL = 'https://finlearn-backend-hagq.onrender.com/api/v1';
+const DEV_API_URL = 'http://localhost:5000/api/v1';
+
+export const API_BASE_URL = (
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.PROD ? PRODUCTION_API_URL : DEV_API_URL)
+).replace(/\/+$/, '');
+
+const BASE_URL = API_BASE_URL;
 
 class ApiService {
   constructor(baseUrl) {

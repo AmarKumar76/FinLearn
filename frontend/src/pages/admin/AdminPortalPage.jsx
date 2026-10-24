@@ -8,7 +8,7 @@ import { Select } from '../../components/common/Select';
 import { Tabs } from '../../components/common/Tabs';
 import { Loading } from '../../components/common/Loading';
 import { EmptyState } from '../../components/common/EmptyState';
-import api from '../../services/api';
+import api, { API_BASE_URL } from '../../services/api';
 import {
   ShieldCheck,
   BookOpen,
@@ -284,7 +284,7 @@ export function AdminPortalPage() {
 
     try {
       setMSubmitting(true);
-      const res = await fetch('http://localhost:5000/api/v1/learning/admin/materials/upload', {
+      const res = await fetch(`${API_BASE_URL}/learning/admin/materials/upload`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('finlearn_token')}`,
