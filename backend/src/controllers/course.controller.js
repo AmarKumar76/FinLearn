@@ -246,6 +246,91 @@ export async function markLessonComplete(req, res, next) {
   }
 }
 
+/**
+ * Get dynamic Learning Hub summary for user navigation and sidebar
+ * GET /api/v1/courses/hub-summary
+ */
+export async function getLearningHubSummary(req, res, next) {
+  try {
+    const userId = req.user._id;
+
+    // 1. Get all published courses
+    const courses = await Course.find({ status: 'published' }).sort({ createdAt: 1 }).lean();
+    if (!courses.length) {
+      return successResponse(
+        res,
+        {
+          hasContent: false,
+          continueLesson: null,
+          totalCourses: 0,
+          overallProgressPct: 0,
+        },
+        'No published courses available'
+      );
+    }
+
+    // 2. Fetch all completed progress records for user
+    const completedProgress = await LearnerProgress.find({
+      userId,
+      isCompleted: true,
+    }).lean();
+
+    const completedLessonIdSet = new Set(
+      completedProgress.map((p) => p.lessonId.toString())
+    );
+
+    // 3. Find the first course with an incomplete lesson, or latest started
+    let nextIncompleteLesson = null;
+    let nextCourse = null;
+    let totalLessonsCount = 0;
+
+    for (const course of courses) {
+      const lessons = await Lesson.find({ courseId: course._id, status: 'published' })
+        .sort({ order: 1 })
+        .lean();
+      
+      totalLessonsCount += lessons.length;
+
+      if (!nextIncompleteLesson) {
+        for (const lesson of lessons) {
+          if (!completedLessonIdSet.has(lesson._id.toString())) {
+            nextIncompleteLesson = lesson;
+            nextCourse = course;
+            break;
+          }
+        }
+      }
+    }
+
+    const overallProgressPct =
+      totalLessonsCount > 0
+        ? Math.min(100, Math.round((completedLessonIdSet.size / totalLessonsCount) * 100))
+        : 0;
+
+    return successResponse(
+      res,
+      {
+        hasContent: true,
+        continueLesson: nextIncompleteLesson
+          ? {
+              lessonId: nextIncompleteLesson._id.toString(),
+              title: nextIncompleteLesson.title,
+              estimatedMinutes: nextIncompleteLesson.estimatedMinutes || 10,
+              courseId: nextCourse._id.toString(),
+              courseTitle: nextCourse.title,
+            }
+          : null,
+        completedLessonsCount: completedLessonIdSet.size,
+        totalLessonsCount,
+        overallProgressPct,
+      },
+      'Learning Hub summary retrieved'
+    );
+  } catch (err) {
+    return next(err);
+  }
+}
+
 // ==========================================
 // 3. SECURE PDF MATERIAL ACCESS
 // ==========================================

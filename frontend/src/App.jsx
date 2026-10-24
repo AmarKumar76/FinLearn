@@ -10,6 +10,8 @@ import LandingPage from './pages/public/LandingPage';
 import LoginPage from './pages/public/LoginPage';
 import SignupPage from './pages/public/SignupPage';
 import OnboardingPage from './pages/public/OnboardingPage';
+import ForgotPasswordPage from './pages/public/ForgotPasswordPage';
+import ResetPasswordPage from './pages/public/ResetPasswordPage';
 
 // Authenticated Application Pages
 import DashboardPage from './pages/app/DashboardPage';
@@ -19,6 +21,8 @@ import CommitmentsPage from './pages/app/CommitmentsPage';
 import LearningLabPage from './pages/app/LearningLabPage';
 import LessonViewPage from './pages/app/LessonViewPage';
 import QuizPage from './pages/app/QuizPage';
+import LeaderboardPage from './pages/app/LeaderboardPage';
+import ProfilePage from './pages/app/ProfilePage';
 import AiCoachPage from './pages/app/AiCoachPage';
 import SafetyLabPage from './pages/app/SafetyLabPage';
 import LoanGuidePage from './pages/app/LoanGuidePage';
@@ -38,6 +42,8 @@ export function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/onboarding" element={<OnboardingPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
 
       {/* Authenticated User Workspace Shell */}
       <Route
@@ -59,6 +65,11 @@ export function App() {
         <Route path="/learning" element={<LearningLabPage />} />
         <Route path="/lesson" element={<LessonViewPage />} />
         <Route path="/quiz" element={<QuizPage />} />
+        <Route path="/leaderboard" element={<LeaderboardPage />} />
+        
+        {/* Profile */}
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/profile/:username" element={<ProfilePage />} />
         
         {/* Safety, Guidance & AI */}
         <Route path="/ai-coach" element={<AiCoachPage />} />

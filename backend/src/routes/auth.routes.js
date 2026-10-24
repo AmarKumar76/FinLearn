@@ -1,6 +1,15 @@
 import express from 'express';
 import rateLimit from 'express-rate-limit';
-import { register, login, logout, getMe } from '../controllers/auth.controller.js';
+import {
+  register,
+  login,
+  logout,
+  getMe,
+  updateProfile,
+  changePassword,
+  forgotPassword,
+  resetPassword,
+} from '../controllers/auth.controller.js';
 import { validateRegister, validateLogin } from '../validators/auth.validator.js';
 import { requireAuth, requireAdmin } from '../middleware/auth.middleware.js';
 import { successResponse } from '../utils/apiResponse.js';
@@ -26,10 +35,14 @@ router.post('/register', authLimiter, validateRegister, register);
 router.post('/signup', authLimiter, validateRegister, register);
 router.post('/login', authLimiter, validateLogin, login);
 router.post('/signin', authLimiter, validateLogin, login);
+router.post('/forgot-password', authLimiter, forgotPassword);
+router.post('/reset-password', authLimiter, resetPassword);
 
-// Protected session routes
+// Protected session & profile routes
 router.post('/logout', requireAuth, logout);
 router.get('/me', requireAuth, getMe);
+router.patch('/profile', requireAuth, updateProfile);
+router.post('/change-password', requireAuth, changePassword);
 
 // Dedicated RBAC test endpoint for verification
 router.get('/admin-only', requireAuth, requireAdmin, (req, res) => {

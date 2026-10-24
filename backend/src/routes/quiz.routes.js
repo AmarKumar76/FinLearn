@@ -6,6 +6,7 @@ import {
   submitQuizAttempt,
   getAttemptReview,
   getGamificationProfile,
+  getLeaderboard,
   generateModulePracticeQuiz,
   adminGetQuizzes,
   adminCreateQuiz,
@@ -26,6 +27,7 @@ router.get('/quizzes/:id', getQuizById);
 router.post('/quizzes/:id/submit', submitQuizAttempt);
 router.get('/quizzes/attempts/:attemptId', getAttemptReview);
 router.get('/gamification/profile', getGamificationProfile);
+router.get('/gamification/leaderboard', getLeaderboard);
 
 // Admin-Only Quiz Authoring & Management APIs
 router.get('/admin/quizzes', requireAdmin, adminGetQuizzes);

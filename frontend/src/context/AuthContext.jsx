@@ -82,6 +82,46 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // Update profile
+  const updateProfile = async (profileData) => {
+    try {
+      const res = await api.patch('/auth/profile', profileData);
+      if (res && res.data && res.data.user) {
+        setUser(res.data.user);
+        return res.data.user;
+      }
+      throw new Error('Failed to update profile');
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  // Change password
+  const changePassword = async (currentPassword, newPassword) => {
+    try {
+      const res = await api.post('/auth/change-password', { currentPassword, newPassword });
+      if (res && res.data && res.data.token) {
+        localStorage.setItem('finlearn_token', res.data.token);
+      }
+      if (res && res.data && res.data.user) {
+        setUser(res.data.user);
+      }
+      return res.data;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  // Forgot password
+  const forgotPassword = async (email) => {
+    return api.post('/auth/forgot-password', { email });
+  };
+
+  // Reset password
+  const resetPassword = async (token, newPassword) => {
+    return api.post('/auth/reset-password', { token, newPassword });
+  };
+
   const value = {
     user,
     isAuthenticated: !!user,
@@ -92,6 +132,10 @@ export function AuthProvider({ children }) {
     register,
     logout,
     checkAuth,
+    updateProfile,
+    changePassword,
+    forgotPassword,
+    resetPassword,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

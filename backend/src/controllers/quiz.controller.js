@@ -389,6 +389,90 @@ export async function getGamificationProfile(req, res, next) {
   }
 }
 
+/**
+ * Get global learning leaderboard with pagination and user ranking
+ * GET /api/v1/quizzes/gamification/leaderboard
+ */
+export async function getLeaderboard(req, res, next) {
+  try {
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 20));
+    const skip = (page - 1) * limit;
+
+    // Fetch top profiles sorted by totalXp descending, then currentStreak descending
+    const [topProfiles, totalCount] = await Promise.all([
+      GamificationProfile.find()
+        .sort({ totalXp: -1, currentStreak: -1, createdAt: 1 })
+        .skip(skip)
+        .limit(limit)
+        .populate('userId', 'name username bio isProfilePublic createdAt')
+        .lean(),
+      GamificationProfile.countDocuments(),
+    ]);
+
+    // Format leaderboard entries ensuring user privacy
+    const entries = topProfiles.map((p, index) => {
+      const user = p.userId;
+      const isPublic = user?.isProfilePublic !== false;
+      return {
+        rank: skip + index + 1,
+        userId: user?._id?.toString() || p.userId?.toString(),
+        name: isPublic ? (user?.name || 'Anonymous Learner') : 'Private Learner',
+        username: isPublic ? (user?.username || null) : null,
+        bio: isPublic ? (user?.bio || '') : '',
+        totalXp: p.totalXp || 0,
+        currentStreak: p.currentStreak || 0,
+        longestStreak: p.longestStreak || 0,
+        completedLessonsCount: p.completedLessonsCount || 0,
+        passedQuizzesCount: p.passedQuizzesCount || 0,
+        badgesCount: p.earnedBadges?.length || 0,
+        isCurrentUser: user?._id?.toString() === req.user?._id?.toString(),
+      };
+    });
+
+    // Compute current user's actual global rank
+    let currentUserRank = null;
+    let currentUserProfile = null;
+    if (req.user) {
+      const myProfile = await GamificationProfile.findOne({ userId: req.user._id }).lean();
+      if (myProfile) {
+        const higherCount = await GamificationProfile.countDocuments({
+          $or: [
+            { totalXp: { $gt: myProfile.totalXp } },
+            { totalXp: myProfile.totalXp, currentStreak: { $gt: myProfile.currentStreak } },
+          ],
+        });
+        currentUserRank = higherCount + 1;
+        currentUserProfile = {
+          rank: currentUserRank,
+          totalXp: myProfile.totalXp,
+          currentStreak: myProfile.currentStreak,
+          completedLessonsCount: myProfile.completedLessonsCount,
+          passedQuizzesCount: myProfile.passedQuizzesCount,
+          badgesCount: myProfile.earnedBadges?.length || 0,
+        };
+      }
+    }
+
+    return successResponse(
+      res,
+      {
+        leaderboard: entries,
+        currentUser: currentUserProfile,
+        pagination: {
+          page,
+          limit,
+          totalPages: Math.ceil(totalCount / limit),
+          totalEntries: totalCount,
+        },
+      },
+      'Leaderboard retrieved successfully'
+    );
+  } catch (err) {
+    return next(err);
+  }
+}
+
 // ==========================================
 // 3. ADMIN QUIZ MANAGEMENT APIS
 // ==========================================

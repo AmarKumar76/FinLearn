@@ -6,6 +6,7 @@ import {
   getPublishedCourseById,
   getPublishedLessonById,
   markLessonComplete,
+  getLearningHubSummary,
   downloadMaterial,
   adminGetCourses,
   adminCreateCourse,
@@ -21,6 +22,7 @@ const router = express.Router();
 router.use(requireAuth);
 
 // Learner Public/Catalog APIs
+router.get('/courses/hub-summary', getLearningHubSummary);
 router.get('/courses', getPublishedCourses);
 router.get('/courses/:id', getPublishedCourseById);
 router.get('/lessons/:id', getPublishedLessonById);

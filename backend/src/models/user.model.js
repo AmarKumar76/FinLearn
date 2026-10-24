@@ -37,6 +37,34 @@ const userSchema = new mongoose.Schema(
       default: 'user',
       index: true,
     },
+    username: {
+      type: String,
+      unique: true,
+      sparse: true,
+      trim: true,
+      lowercase: true,
+      minlength: [3, 'Username must be at least 3 characters'],
+      maxlength: [30, 'Username cannot exceed 30 characters'],
+      match: [/^[a-zA-Z0-9_]+$/, 'Username can only contain alphanumeric characters and underscores'],
+      index: true,
+    },
+    bio: {
+      type: String,
+      maxlength: [300, 'Bio cannot exceed 300 characters'],
+      default: '',
+    },
+    isProfilePublic: {
+      type: Boolean,
+      default: true,
+    },
+    resetPasswordToken: {
+      type: String,
+      select: false,
+    },
+    resetPasswordExpires: {
+      type: Date,
+      select: false,
+    },
     accountStatus: {
       type: String,
       enum: ['active', 'disabled', 'suspended'],
@@ -59,8 +87,12 @@ const userSchema = new mongoose.Schema(
       },
       theme: {
         type: String,
-        default: 'system',
-        enum: ['system', 'light', 'dark'],
+        default: 'light',
+        enum: ['system', 'light', 'dark', 'amoled'],
+      },
+      notifications: {
+        inApp: { type: Boolean, default: true },
+        email: { type: Boolean, default: false },
       },
     },
     lastLoginAt: {

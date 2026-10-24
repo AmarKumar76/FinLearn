@@ -17,6 +17,7 @@ import guidanceRoutes from './routes/guidance.routes.js';
 import aiCoachRoutes from './routes/aiCoach.routes.js';
 import insightsRoutes from './routes/insights.routes.js';
 import adminAuditRoutes from './routes/adminAudit.routes.js';
+import userRoutes from './routes/user.routes.js';
 import { notFoundHandler } from './middleware/notFound.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
@@ -94,6 +95,7 @@ export function createApp() {
   app.use('/api/v1/ai-coach', aiCoachRoutes);
   app.use('/api/v1/insights', insightsRoutes);
   app.use('/api/v1/admin', adminAuditRoutes);
+  app.use('/api/v1/users', userRoutes);
 
   // 404 Handler
   app.use(notFoundHandler);
